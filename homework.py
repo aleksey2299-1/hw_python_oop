@@ -22,7 +22,6 @@ class InfoMessage:
         return self.message.format(**asdict(self))
 
 
-@dataclass
 class Training:
     """Базовый класс тренировки."""
     H_IN_M: float = 60.0
@@ -155,8 +154,10 @@ def read_package(workout_type: str, data: list[float]) -> Training:
         trainings[workout_type](*data)
     except KeyError:
         print('Ошибка KeyError: не верно задан тип тренировки')
+        raise
     except TypeError:
         print('Ошибка TypeError: ошибка переданных данных')
+        raise
     else:
         return trainings[workout_type](*data)
 
@@ -169,12 +170,11 @@ def main(training: Training) -> None:
 
 if __name__ == '__main__':
     packages = [
-        ('SWM', [720, 1, 80, 25, 40]),
+        ('SWM', [720, 1, 80, 25, ]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
     ]
 
     for workout_type, data in packages:
         training = read_package(workout_type, data)
-        if training:
-            main(training)
+        main(training)
