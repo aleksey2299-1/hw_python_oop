@@ -25,8 +25,8 @@ class InfoMessage:
 @dataclass
 class Training:
     """Базовый класс тренировки."""
-    H_IN_M: float = 60
-    M_IN_KM: float = 1000
+    H_IN_M: float = 60.0
+    M_IN_KM: float = 1000.0
     LEN_STEP: float = 0.65
 
     def __init__(
@@ -67,7 +67,7 @@ class Training:
 
 class Running(Training):
     """Тренировка: бег."""
-    CALORIES_MEAN_SPEED_MULTIPLIER: float = 18
+    CALORIES_MEAN_SPEED_MULTIPLIER: float = 18.0
     CALORIES_MEAN_SPEED_SHIFT: float = 1.79
 
     def get_spent_calories(self) -> float:
@@ -85,7 +85,7 @@ class SportsWalking(Training):
     COEF_WEIGHT: float = 0.035
     MEAN_SPEED_IN_2_AND_HEIGHT: float = 0.029
     KM_PER_H_IN_M_IN_S: float = 0.278
-    SM_IN_M: float = 100
+    SM_IN_M: float = 100.0
 
     def __init__(
         self,
@@ -115,7 +115,7 @@ class Swimming(Training):
     """Тренировка: плавание."""
     LEN_STEP: float = 1.38
     MEAN_SPEED_MOVE: float = 1.1
-    SPEED_MULTIPLIER: int = 2
+    SPEED_MULTIPLIER: float = 2.0
 
     def __init__(
         self,
