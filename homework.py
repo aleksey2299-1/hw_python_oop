@@ -22,6 +22,7 @@ class InfoMessage:
         return self.message.format(**asdict(self))
 
 
+@dataclass
 class Training:
     """Базовый класс тренировки."""
     H_IN_M: float = 60
@@ -48,7 +49,10 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f'{self.__class__.__name__} '
+            'не имеет функции подсчета калорий.'
+        )
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -57,7 +61,7 @@ class Training:
             self.duration_h,
             self.get_distance(),
             self.get_mean_speed(),
-            self.get_spent_calories()
+            self.get_spent_calories(),
         )
 
 
@@ -70,7 +74,7 @@ class Running(Training):
         """Получить кол-во затраченных калорий для бега."""
         minutes: float = self.duration_h * self.H_IN_M
         return (
-            (self.CALORIES_MEAN_SPEED_MULTIPLIER * super().get_mean_speed()
+            (self.CALORIES_MEAN_SPEED_MULTIPLIER * self.get_mean_speed()
              + self.CALORIES_MEAN_SPEED_SHIFT)
             * self.weight_kg / self.M_IN_KM * minutes
         )
@@ -111,7 +115,7 @@ class Swimming(Training):
     """Тренировка: плавание."""
     LEN_STEP: float = 1.38
     MEAN_SPEED_MOVE: float = 1.1
-    SPEED_MULTIPLIER: float = 2
+    SPEED_MULTIPLIER: int = 2
 
     def __init__(
         self,
@@ -147,7 +151,14 @@ def read_package(workout_type: str, data: list[float]) -> Training:
         'RUN': Running,
         'WLK': SportsWalking,
     }
-    return trainings[workout_type](*data)
+    try:
+        trainings[workout_type](*data)
+    except KeyError:
+        print('Ошибка KeyError: не верно задан тип тренировки')
+    except TypeError:
+        print('Ошибка TypeError: ошибка переданных данных')
+    else:
+        return trainings[workout_type](*data)
 
 
 def main(training: Training) -> None:
@@ -164,11 +175,6 @@ if __name__ == '__main__':
     ]
 
     for workout_type, data in packages:
-        try:
-            training = read_package(workout_type, data)
-        except KeyError:
-            print('Ошибка KeyError: не верно задан тип тренировки')
-        except TypeError:
-            print('Ошибка TypeError: ошибка переданных данных')
-        else:
+        training = read_package(workout_type, data)
+        if training:
             main(training)
